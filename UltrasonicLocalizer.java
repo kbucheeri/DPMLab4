@@ -44,14 +44,13 @@ public class UltrasonicLocalizer {
       System.out.println(firstEdge + ",  " + secondEdge + " average: " + ave);
     double dtheta;
     if(firstEdge < secondEdge)
-      dtheta = 235 - ave;
+      dtheta = 240 - ave;
     else
-      dtheta = 235 - 180 - ave;
+      dtheta = 240 - 180 - ave;
     Resources.odometer.incrementTheta(dtheta);
     Navigation.turnTo(0);
     Sound.beep();
-    Navigation.turnTo(90);
-    Sound.beep();
+    
     //wait for reading to stabilize before measuring vertical distance.
    /* try {
       Thread.sleep(300);
