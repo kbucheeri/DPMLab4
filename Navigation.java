@@ -43,23 +43,12 @@ public class Navigation {
     leftMotor.setSpeed(FORWARD_SPEED);
     rightMotor.setSpeed(FORWARD_SPEED);
     leftMotor.rotate(convertDistance(magnitude), true);
-    rightMotor.rotate(convertDistance(magnitude), true); // executes next line first
+    rightMotor.rotate(convertDistance(magnitude), false); // executes next line first
     while (true) {
-      if ((leftMotor.isMoving() && rightMotor.isMoving()) == false // one motor isnt moving
-          || UltrasonicPoller.getDistance() <= 9)
-        break;
-    }
-    if (UltrasonicPoller.getDistance() <= 9) {
-      /*
-       * pass theta before stopping in case one motor stops before the other
-       */
-      double theta = odometer.getXYT()[2];
-      leftMotor.stop();
-      rightMotor.stop();
-      obstacleAvoiderSimple(x, y, theta);
-      // dont set navigation to having ended, a new travel to call will be done.
-      return;
-    }
+      if ((leftMotor.isMoving() && rightMotor.isMoving()) == false) // one motor isnt moving then stop
+          //|| UltrasonicPoller.getDistance() <= 9)
+        break; }
+    
     navigationStatus = false; // only sets it to false after travel function terminates
     // System.out.println("ended navigation!");
   }

@@ -33,7 +33,7 @@ public class Lab4 {
     if (buttonChoice == Button.ID_LEFT) {
       
       new Thread(new UltrasonicPoller()).start();
-      Testing.lightSensorTest(); 
+      //Testing.lightSensorTest(); 
       UltrasonicLocalizer.RisingEdge();
       
     } else {

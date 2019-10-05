@@ -40,10 +40,10 @@ public class Testing {
           /**
            * Rotate for 360 Degrees, to plot the distance
            */
-          leftMotor.setSpeed(100);
-          rightMotor.setSpeed(100);
-          leftMotor.rotate(convertAngle(360), true);
-          rightMotor.rotate(-convertAngle(360), false);
+          leftMotor.setSpeed(150);
+          rightMotor.setSpeed(150);
+          leftMotor.rotate(convertAngle(400), true);
+          rightMotor.rotate(-convertAngle(400), false);
           System.out.println("i = " + i + "\n\n\n\n\n\n");
           try {
             Thread.sleep(200);

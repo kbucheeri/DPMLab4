@@ -20,6 +20,7 @@ public class UltrasonicPoller implements Runnable {
     usData = new float[US_SENSOR.sampleSize()];
     for(int i = 0; i < buffer.length; i++)
       buffer[i] = 255;
+    SLEEP_TIME = 35;
   }
   
    /*
@@ -33,6 +34,7 @@ public class UltrasonicPoller implements Runnable {
   static int median = 100;
   static double harmonic = 100;
   static int asum;
+  static int SLEEP_TIME = 35;
   public void LPF() { // is this a good idea? rapidly changing corners.
    
   }
@@ -98,13 +100,20 @@ public class UltrasonicPoller implements Runnable {
       filter(distance);
       LCD.drawString("mean: " + harmonic, 0, 3);
       LCD.drawString("dist: " + median, 0, 4);
-      LCD.drawString("Cross: " + Navigation.crossProduct(), 0, 6);
-     // compareFilters();
+      if(SLEEP_TIME < 50)
+        compareFilters();
       try {
-        Thread.sleep(35); //changed it to 40 from 50
+        Thread.sleep(SLEEP_TIME); //changed it to 40 from 50
       } catch (Exception e) {
       } // Poor man's timed sampling
     }
   }
-
+  /**
+   * Changes the sleep time of the thread, and consequently the polling rate. 
+   * @param time time to set the thread sleep time
+   */
+  public static void setSleepTime(int time)
+  {
+    SLEEP_TIME = time;
+  }
 }

@@ -20,9 +20,9 @@ public class Resources {
    */
   public static final double BANDCENTRE = 51;
   /**
-   * Threshold for detectino of an edge (for localization)
+   * Threshold for detection of an edge (for localization)
    */
-  public static final double EDGE_THRESHOLD = 20;
+  public static final int EDGE_THRESHOLD = 20;
   /**
    * The wheel radius in centimeters.
    */
