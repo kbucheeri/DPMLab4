@@ -79,7 +79,9 @@ public class UltrasonicLocalizer {
     }
     Navigation.travelTo(30.48, 30.48);
     Navigation.turnTo(0);*/
-    Button.waitForAnyPress();
+    if(Button.waitForAnyPress() == Button.ID_ESCAPE)
+      System.exit(0);
+    
 
   }
 
