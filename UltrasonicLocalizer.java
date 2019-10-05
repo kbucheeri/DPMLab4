@@ -44,9 +44,9 @@ public class UltrasonicLocalizer {
       System.out.println(firstEdge + ",  " + secondEdge + " average: " + ave);
     double dtheta;
     if(firstEdge < secondEdge)
-      dtheta = 218 - ave;
+      dtheta = 235 - ave;
     else
-      dtheta = 218 - 180 - ave;
+      dtheta = 235 - 180 - ave;
     Resources.odometer.incrementTheta(dtheta);
     Navigation.turnTo(0);
     Sound.beep();

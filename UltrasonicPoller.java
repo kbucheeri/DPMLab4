@@ -100,8 +100,7 @@ public class UltrasonicPoller implements Runnable {
       filter(distance);
       LCD.drawString("mean: " + harmonic, 0, 3);
       LCD.drawString("dist: " + median, 0, 4);
-      if(SLEEP_TIME < 50)
-        compareFilters();
+     
       try {
         Thread.sleep(SLEEP_TIME); //changed it to 40 from 50
       } catch (Exception e) {
