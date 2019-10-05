@@ -34,14 +34,14 @@ public class Testing {
         /***
          *  Sleep for 2 seconds
          */
-        Main.sleepFor(TIMEOUT_PERIOD);
+        Lab4.sleepFor(TIMEOUT_PERIOD);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
           /**
            * Rotate for 360 Degrees, to plot the distance
            */
-          leftMotor.setSpeed(i * 110);
-          rightMotor.setSpeed(i * 110);
+          leftMotor.setSpeed(100);
+          rightMotor.setSpeed(100);
           leftMotor.rotate(convertAngle(360), true);
           rightMotor.rotate(-convertAngle(360), false);
           System.out.println("i = " + i + "\n\n\n\n\n\n");
@@ -55,12 +55,15 @@ public class Testing {
         leftMotor.setSpeed(0); //added these so that we can easily check if robot is travelling in a straight line 
 
         rightMotor.setSpeed(0);
+        UltrasonicLocalizer.sweepDone = true;
         try {
           Thread.sleep(200);
         } catch (InterruptedException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
+        
+       
         System.exit(0);
       }
     }).start();

@@ -20,6 +20,10 @@ public class Resources {
    */
   public static final double BANDCENTRE = 51;
   /**
+   * Threshold for detectino of an edge (for localization)
+   */
+  public static final double EDGE_THRESHOLD = 25;
+  /**
    * The wheel radius in centimeters.
    */
   public static final double WHEEL_RAD = 2.130;

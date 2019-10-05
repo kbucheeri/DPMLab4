@@ -29,9 +29,10 @@ public class UltrasonicPoller implements Runnable {
    * @see java.lang.Thread#run()
    */
   static int distance;
-  int[] buffer = new int[12];
+  int[] buffer = new int[6];
   static int median = 100;
-  static double average = 100;
+  static double harmonic = 100;
+  static int asum;
   public void LPF() { // is this a good idea? rapidly changing corners.
    
   }
@@ -51,10 +52,14 @@ public class UltrasonicPoller implements Runnable {
      }
      buffer[buffer.length - 1] = distance;
    }
+   asum = 0;
    double sum = 0;
    for(int i = 0; i < buffer.length; i++)
-     sum+= 1.0 / buffer[i];
-   average= buffer.length/sum;
+     {sum+= 1.0 / buffer[i];
+     asum += buffer[i];
+     }
+   asum /= buffer.length;
+   harmonic= buffer.length/sum;
    int[] temp = buffer.clone();
    //don't want to sort buffer directly because want to maintain input order
    Arrays.sort(temp);
@@ -64,7 +69,16 @@ public class UltrasonicPoller implements Runnable {
   * Compares different data from poller to compare filtering methods
   */
  public static void compareFilters(){
-   System.out.println(odometer.getXYT()[2] +", "  +distance +", "+ median + ", " + average);
+   System.out.println(odometer.getXYT()[2] +", "  +distance +", "+ median + ", " + harmonic + ", " + asum);
+ }
+ /**
+  * 
+  * @return array of all the filtration mechanisms
+  */
+ public static int[] compareMethods()
+ {
+   int[] data = {median, asum, (int) harmonic};
+   return data;
  }
  /**
   * 
@@ -72,15 +86,17 @@ public class UltrasonicPoller implements Runnable {
   */
  public static int getDistance()
  {
-  return (int) average;
+  return (int) harmonic;
  }
   public void run() {
     
     while (true) {
       US_SENSOR.getDistanceMode().fetchSample(usData, 0); // acquire distance data in meters
       distance = (int) (usData[0] * 100.0); // extract from buffer, convert to cm, cast to int
+      if(distance > 255)
+        distance = 255;
       filter(distance);
-      LCD.drawString("mean: " + average, 0, 3);
+      LCD.drawString("mean: " + harmonic, 0, 3);
       LCD.drawString("dist: " + median, 0, 4);
       LCD.drawString("Cross: " + Navigation.crossProduct(), 0, 6);
       compareFilters();
