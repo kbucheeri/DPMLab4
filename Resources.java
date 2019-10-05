@@ -22,7 +22,7 @@ public class Resources {
   /**
    * Threshold for detectino of an edge (for localization)
    */
-  public static final double EDGE_THRESHOLD = 25;
+  public static final double EDGE_THRESHOLD = 20;
   /**
    * The wheel radius in centimeters.
    */

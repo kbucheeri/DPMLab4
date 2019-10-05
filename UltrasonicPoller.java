@@ -101,7 +101,7 @@ public class UltrasonicPoller implements Runnable {
       LCD.drawString("Cross: " + Navigation.crossProduct(), 0, 6);
       compareFilters();
       try {
-        Thread.sleep(40); //changed it to 40 from 50
+        Thread.sleep(35); //changed it to 40 from 50
       } catch (Exception e) {
       } // Poor man's timed sampling
     }

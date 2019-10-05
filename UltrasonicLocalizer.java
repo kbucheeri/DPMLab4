@@ -26,7 +26,8 @@ public class UltrasonicLocalizer {
     }
     System.out.println("\n\n\n\n");
     for(int i = 0; i < 3; i++)
-      System.out.println("Schema " + i + ": " + firstEdge[i] + ",  " + secondEdge[i]);
+      System.out.println("Schema " + i + ": " + firstEdge[i] + ",  " + secondEdge[i]
+          + "average: " + (firstEdge[i] + secondEdge[i])/2);
   }
 
   public static void FallingEdge() {
