@@ -46,10 +46,10 @@ public class Navigation {
     rightMotor.rotate(convertDistance(magnitude), true); // executes next line first
     while (true) {
       if ((leftMotor.isMoving() && rightMotor.isMoving()) == false // one motor isnt moving
-          || ObstacleAvoider.getDistance() <= 9)
+          || UltrasonicPoller.getDistance() <= 9)
         break;
     }
-    if (ObstacleAvoider.getDistance() <= 9) {
+    if (UltrasonicPoller.getDistance() <= 9) {
       /*
        * pass theta before stopping in case one motor stops before the other
        */
@@ -87,7 +87,7 @@ public class Navigation {
     turn(-90 * dir);
     leftMotor.setSpeed(FOLLOWER_SPEED);
     rightMotor.setSpeed(FOLLOWER_SPEED);
-    int dist = ObstacleAvoider.getDistance();
+    int dist = UltrasonicPoller.getDistance();
     /**
      * "Wall follower 1"
      */
@@ -103,7 +103,7 @@ public class Navigation {
       } catch (InterruptedException e1) {
         e1.printStackTrace();
       }
-      dist = ObstacleAvoider.getDistance();
+      dist = UltrasonicPoller.getDistance();
       if (dist > BANDCENTRE)
         break;
       turn(-TURN_AMOUNT * dir);
@@ -126,7 +126,7 @@ public class Navigation {
       {
         e1.printStackTrace();
       }
-      dist = ObstacleAvoider.getDistance();
+      dist = UltrasonicPoller.getDistance();
       
       if (dist > BANDCENTRE)
         break;

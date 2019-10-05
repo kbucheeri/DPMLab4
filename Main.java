@@ -29,9 +29,11 @@ public class Main {
     buttonChoice = chooseType();
     new Thread(odometer).start();
     LCD.clear();
-    new Thread(new ObstacleAvoider()).start();
+    
     if (buttonChoice == Button.ID_LEFT) {
-      UltrasonicLocalizer.RisingEdge();
+      
+      new Thread(new UltrasonicPoller()).start();
+      Testing.lightSensorTest();
       
     } else {
       UltrasonicLocalizer.RisingEdge();
