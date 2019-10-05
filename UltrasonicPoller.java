@@ -99,7 +99,7 @@ public class UltrasonicPoller implements Runnable {
       LCD.drawString("mean: " + harmonic, 0, 3);
       LCD.drawString("dist: " + median, 0, 4);
       LCD.drawString("Cross: " + Navigation.crossProduct(), 0, 6);
-      compareFilters();
+     // compareFilters();
       try {
         Thread.sleep(35); //changed it to 40 from 50
       } catch (Exception e) {

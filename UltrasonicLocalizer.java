@@ -13,7 +13,7 @@ public class UltrasonicLocalizer {
     while(sweepDone == false)
     {
       int theta = (int) Resources.odometer.getXYT()[2];
-      int[] data = UltrasonicPoller.compareMethods();
+      int[] data = UltrasonicPoller.getDistance()();
       for(int i = 0; i < 3; i++) {
         if(data[i] < Resources.EDGE_THRESHOLD  && prevData[i] > Resources.EDGE_THRESHOLD)
         firstEdge[i] = theta;}
