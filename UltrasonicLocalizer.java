@@ -37,7 +37,7 @@ public class UltrasonicLocalizer {
       prevData = data;
     }
 
-    UltrasonicPoller.setSleepTime(70);
+    UltrasonicPoller.setSleepTime(50);
     // get average of both data
     int ave = (firstEdge + secondEdge) / 2;
     System.out.println("\n\n\n\n");
@@ -48,28 +48,31 @@ public class UltrasonicLocalizer {
     else
       dtheta = 240 - 180 - ave;
     Resources.odometer.incrementTheta(dtheta);
-    Navigation.turnTo(0);
+ //   Navigation.turnTo(0);
     Sound.beep();
     
     //wait for reading to stabilize before measuring vertical distance.
+    Navigation.turnTo(180);
    /* try {
-      Thread.sleep(300);
+      Thread.sleep(500);
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    int distY = UltrasonicPoller.getDistance();
+   // int distY = UltrasonicPoller.getDistance();
     Navigation.turnTo(270);
     //wait for reading to stabilize before measuring vertical distance.
     try {
-      Thread.sleep(300);
+      Thread.sleep(500);
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    
     int distX = UltrasonicPoller.getDistance();
+    
     Resources.odometer.setX(distX + 5); //sensor offset
-    Resources.odometer.setY(distY + 5);
+    Resources.odometer.setY(distX + 5);
     try {
       Thread.sleep(300);
     } catch (InterruptedException e) {
@@ -77,7 +80,7 @@ public class UltrasonicLocalizer {
       e.printStackTrace();
     }
     Navigation.travelTo(30.48, 30.48);
-    Navigation.turnTo(0);*/
+    Navigation.turnTo(0); */
     if(Button.waitForAnyPress() == Button.ID_ESCAPE)
       System.exit(0);
     
