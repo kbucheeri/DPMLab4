@@ -16,38 +16,53 @@ public class LightLocalizer {
      */
   float[] lightData = new float[3];
   double floor_intensity = 0;
+  double intensity4 = 0;
+  int count = 0;
   
-  colorSensor.getRGBMode().fetchSample(lightData, 0);
-  
+  leftMotor.setSpeed(100);
+  rightMotor.setSpeed(100);
+  leftMotor.rotate(Navigation.convertAngle(360), true);
+  rightMotor.rotate(-Navigation.convertAngle(360), true);
   /**
    * Resizing the actual intensity values to make it more readable
    * and thus easier to test
    */
+  int[] buffer = {1000, 1000, 1000};
+  while(leftMotor.isMoving())
+  {
+    colorSensor.getRGBMode().fetchSample(lightData, 0);
   for (int i = 0; i < 3; i++) {
       lightData[i] *= 2000; 
     }
-  double intensity = lightData[0] + lightData[1] + lightData[2];
+  for(int i = 0; i < buffer.length - 1; i++)
+  {
+    buffer[i] = buffer[i+1];
+  }
   
-  if (intensity < 0.92 * floor_intensity && (leftMotor.getSpeed() + rightMotor.getSpeed()) > 0) {
-   // double angle = odometer.getXYT()[2];
-    /**
-     * When headed 0 degree
-     * Get orientation 
-     */
-    if (UltrasonicLocalizer.getAngle() == 0) {
-      //Detects y Line
-      Sound.beep();
-    }
-    /**
-     * When headed 90 degree
-     */
-    else if (UltrasonicLocalizer.getAngle() == 90) {
-      //X Line
-      Sound.beep();
-    }
-
+  int intensity = (int)( lightData[0] + lightData[1] + lightData[2]);
+  buffer[buffer.length-1] = intensity;
+  if(count % 5 == 0)
+    intensity4 = intensity;
+  System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " +  intensity4 + ", " + average(buffer));
+  try {
+    Thread.sleep(50);
+  } catch (InterruptedException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
   }
- 
+  count++;
+   }
+  System.exit(0);
   }
+  public static int average(int[] arr)
+  {
+    int sum = 0;
+    for(int i = 0; i < arr.length; i++)
+    sum += arr[i];
+  
+  return sum/arr.length;
 }
+}
+ 
+
 

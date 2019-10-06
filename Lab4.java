@@ -26,15 +26,18 @@ public class Lab4 {
     // new Thread(new OdometryCorrection()).start(); // TODO implement OdometryCorrection
    
     new Thread(new Display()).start();
-    buttonChoice = chooseType();
+    
+  
     new Thread(odometer).start();
+    LightLocalizer.Localize();
+    buttonChoice = chooseType();
     LCD.clear();
     
     if (buttonChoice == Button.ID_LEFT) {
       
-      new Thread(new UltrasonicPoller()).start();
+     // new Thread(new UltrasonicPoller()).start();
       //Testing.lightSensorTest(); 
-      UltrasonicLocalizer.RisingEdge();
+      //UltrasonicLocalizer.RisingEdge();
       
     } else {
       UltrasonicLocalizer.RisingEdge();

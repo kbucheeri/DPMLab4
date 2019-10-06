@@ -5,5 +5,5 @@ import sys
 
 file='Data2.csv'
 fname = open(file,'rt')
-plt.plotfile(fname, ('angle', 'raw', 'median', 'harmonic', 'arithmetic'), subplots=False)
+plt.plotfile(fname, ('angle', 'intensity', 'intensity4', 'average'), subplots=False)
 plt.show()
