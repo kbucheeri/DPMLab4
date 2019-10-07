@@ -42,8 +42,11 @@ public class LightLocalizer {
   int intensity = (int)( lightData[0] + lightData[1] + lightData[2]);
   buffer[buffer.length-1] = intensity;
   if(count % 5 == 0)
-    intensity4 = intensity;
-  System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " +  intensity4 + ", " + average(buffer));
+  {if(average(buffer) < 1000)
+    Sound.beepSequence();
+  }
+  System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " + average(buffer));
+  
   try {
     Thread.sleep(50);
   } catch (InterruptedException e) {
@@ -62,6 +65,7 @@ public class LightLocalizer {
   
   return sum/arr.length;
 }
+  
 }
  
 

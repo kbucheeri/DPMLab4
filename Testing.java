@@ -84,7 +84,15 @@ public class Testing {
    * @param angle
    * @return the wheel rotations necessary to rotate the robot by the angle
    */
-
+  public static void Test()
+  {
+    while(true)
+    {
+    leftMotor.setSpeed(500);
+    rightMotor.setSpeed(500);
+    System.out.println("");
+    }
+  }
 public static int convertAngle(double angle) {
   return convertDistance(Math.PI * TRACK * angle / 360.0);
 }
