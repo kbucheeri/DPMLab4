@@ -9,7 +9,7 @@ import lejos.hardware.Sound;
 public class UltrasonicLocalizer {
   public static boolean sweepDone = false; // currently sweeping
 
-  public static void RisingEdge() {
+  public static void FallingEdge() {
     // TODO implement localization
 
     // record first edge angle, second edge angle, get average.
@@ -18,8 +18,8 @@ public class UltrasonicLocalizer {
     int prevData = 0;
     leftMotor.setSpeed(160);
     rightMotor.setSpeed(160);
-    leftMotor.rotate(Navigation.convertAngle(360), true);
-    rightMotor.rotate(-Navigation.convertAngle(360), true);
+    leftMotor.forward();
+    rightMotor.backward();
     while ((leftMotor.isMoving() && rightMotor.isMoving()) == true) {
       int theta = (int) Resources.odometer.getXYT()[2];
       int data = UltrasonicPoller.getDistance();
@@ -29,15 +29,23 @@ public class UltrasonicLocalizer {
       if (data < Resources.EDGE_THRESHOLD && prevData > Resources.EDGE_THRESHOLD) {
         firstEdge = theta;
         Sound.beep();
+        /*
+         * switch directions
+         */
+        leftMotor.backward();
+        rightMotor.forward();
       }
-      if (data > Resources.EDGE_THRESHOLD && prevData < Resources.EDGE_THRESHOLD) {
+      
+      if (data < Resources.EDGE_THRESHOLD && prevData > Resources.EDGE_THRESHOLD) {
         secondEdge = theta;
         Sound.beep();
+        leftMotor.stop();
+        rightMotor.stop();
       }
       prevData = data;
     }
-
-    UltrasonicPoller.setSleepTime(50);
+    //slow down ultrasonic polling because its no longer necessary; occupy less processor time.
+    UltrasonicPoller.setSleepTime(500);
     // get average of both data
     int ave = (firstEdge + secondEdge) / 2;
     System.out.println("\n\n\n\n");
@@ -52,7 +60,7 @@ public class UltrasonicLocalizer {
     Sound.beep();
     
     //wait for reading to stabilize before measuring vertical distance.
-    Navigation.turnTo(180);
+    Navigation.turnTo(0);
    /* try {
       Thread.sleep(500);
     } catch (InterruptedException e) {
@@ -87,7 +95,79 @@ public class UltrasonicLocalizer {
 
   }
 
-  public static void FallingEdge() {
-    // TODO implement localization
+  public static void RisingEdge() {
+ // record first edge angle, second edge angle, get average.
+    int firstEdge = 370; // initalize to impossible value for the conditions later on
+    int secondEdge = 370;
+    int prevData = 100;
+    leftMotor.setSpeed(150);
+    rightMotor.setSpeed(150);
+    leftMotor.forward();
+    rightMotor.backward();
+    //stop when both are not 370
+    while (firstEdge == 370) {
+      int theta = (int) Resources.odometer.getXYT()[2];
+      int data = UltrasonicPoller.getDistance();
+      /**
+       * Is below threshold and there was also a drop 
+       * TODO implement noise margin
+       */
+      if (data > Resources.EDGE_THRESHOLD && prevData < Resources.EDGE_THRESHOLD) {
+        firstEdge = theta;
+        Sound.beep();
+        /*
+         * switch directions
+         */
+      }
+      prevData = data;
+      
+    }
+    leftMotor.backward();
+    rightMotor.forward();
+    try {
+      Thread.sleep(300);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    prevData = 100;
+    while (secondEdge == 370) {
+      int theta = (int) Resources.odometer.getXYT()[2];
+      int data = UltrasonicPoller.getDistance();
+      /**
+       * Is below threshold and there was also a drop TODO implement noise margin
+       */
+      if (data > Resources.EDGE_THRESHOLD && prevData < Resources.EDGE_THRESHOLD) {
+        secondEdge = theta;
+        Sound.beep();
+        /*
+         * switch directions
+         */
+        
+      }
+      prevData = data;
+      
+    }
+    //slow down ultrasonic polling because its no longer necessary; occupy less processor time.
+    UltrasonicPoller.setSleepTime(500);
+    // get average of both data
+    int ave = (firstEdge + secondEdge) / 2;
+    System.out.println("\n\n\n\n");
+      System.out.println(firstEdge + ",  " + secondEdge + " average: " + ave);
+    double dtheta;
+    if(firstEdge < secondEdge)
+      dtheta = 240 - ave;
+    else
+      dtheta = 240 - 180 - ave;
+    Resources.odometer.incrementTheta(dtheta);
+ //   Navigation.turnTo(0);
+    Sound.beepSequence();
+    
+    //wait for reading to stabilize before measuring vertical distance.
+   
+    Navigation.turnTo(0);
+   
+    if(Button.waitForAnyPress() == Button.ID_ESCAPE)
+      System.exit(0);
   }
 }
