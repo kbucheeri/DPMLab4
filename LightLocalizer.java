@@ -3,107 +3,87 @@ package ca.mcgill.ecse211.lab4;
 import static ca.mcgill.ecse211.lab4.Resources.leftMotor;
 import static ca.mcgill.ecse211.lab4.Resources.rightMotor;
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 import static ca.mcgill.ecse211.lab4.Resources.odometer;
 import static ca.mcgill.ecse211.lab4.Resources.colorSensor;
 
 public class LightLocalizer {
   public static int[] buffer = new int[5];
 
-  /**
-   * calculates the intensity from the light sensor and applies rudimentary filtering In the form of the arithmetic
-   * mean.
-   * 
-   * @return The average of the previous light sensor intensity values.
-   */
-  public static int calculateIntensity() {
-    float[] lightData = new float[3];
-    colorSensor.getRGBMode().fetchSample(lightData, 0);
-    /**
-     * Resizing the actual intensity values to make it more readable and thus easier to test. Also easier to deal with
-     * ints than double precision
-     */
-
-    for (int i = 0; i < 3; i++) {
-      lightData[i] *= 2000;
-    }
-    for (int i = 0; i < buffer.length - 1; i++) {
-      buffer[i] = buffer[i + 1];
-    }
-    int intensity = (int) (lightData[0] + lightData[1] + lightData[2]);
-    buffer[buffer.length - 1] = intensity;
-    return average(buffer);
-  }
 
   /**
    * Performs light localization
+   * Assumes it starts facing 0 degrees in the corner block
+   * Makes the robot at 1,1
    */
-  public static void Localize() {
+  public static void localizeDistance() {
     /**
      * Float Array to store RGB Raw values
      */
-
-    double intensity4 = 0;
-    int count = 0;
-    initalize(buffer);
     leftMotor.setSpeed(100);
     rightMotor.setSpeed(100);
-    leftMotor.rotate(Navigation.convertAngle(360), true);
-    rightMotor.rotate(-Navigation.convertAngle(360), true);
-    int prevIntensity = 1500;
-    int intensity = 2000;
-    // difference
-    int diff = 1000;
-    int prevDiff = 100;
-    int lines = 0;
+    leftMotor.forward();
+    rightMotor.forward();
     // if light sensing returns to 0 to prevent multiple line readings.
     boolean steadyState = true;
     /*
      * in the sweep. stops when either of the motors stop.
      */
-    while (leftMotor.isMoving()) {
+    while (true) {
 
-      intensity = calculateIntensity();
-      if (diff < 0) // positive value, so has returned to steady state
+      int diff = lightPoller.getIntensity();
+      if (diff > 0) // negative value, so has returned to steady state (fluctuations around 0,0)
         steadyState = true;
       /*
-       * only check for lines every 5 iterations so that polling and action frequency aren't the same. also skip over
-       * first ten counts because of errors when polling starts.
-       * 
+       * spike of less than -75 implies a line has been detected. steadyState makes it
+       * so that it only looks for lines again after it goes back to 0, i.e doesn't detect same lines multiple times.
        */
-      if (diff > 75 && steadyState == true) {
+      if (diff < -75 && steadyState == true) {
+        
         Sound.beepSequence();
-        // System.out.println("\n\nThink I detected a line at: " + odometer.getXYT()[2] + "\n\n");
-        count = 0; // reset counter so it doesn't check for lines for 5 samples
         steadyState = false;
-        lines++;
+        break;
+
       }
-
-
-      // create a variable that resets when it goes positive
-      diff = intensity - prevIntensity;
-      System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " + diff + ", " + lines * 50);
-
-      sleepFor(40);
-
-
-      prevIntensity = intensity;
-      prevDiff = diff;
+      sleepFor(100);
     }
-    // store previous value of intensity in prevIntensity
+    odometer.setY(Resources.SENSOR_TO_WHEEL_DISTANCE);
+    leftMotor.stop();
+    rightMotor.stop();
+    //back up
+    leftMotor.rotate(-Navigation.convertDistance(15), true);
+    rightMotor.rotate(-Navigation.convertDistance(15), false);
+    Sound.beepSequenceUp();
+    Navigation.turnTo(90);
+    
+    leftMotor.forward();
+    rightMotor.forward();
+    steadyState = true;
+    while (true) {
+      int diff = lightPoller.getIntensity();
+      if (diff > 0) // negative value, so has returned to steady state (fluctuations around 0,0)
+        steadyState = true;
+      /*
+       * spike of less than -75 implies a line has been detected. steadyState makes it
+       * so that it only looks for lines again after it goes back to 0, i.e doesn't detect same lines multiple times.
+       */
+      LCD.drawString("Diff: " + diff, 0, 5);
+      if (diff < -75 && steadyState == true) {
+        
+        Sound.beepSequence();
+        steadyState = false;
+        break;
 
+      }
+      sleepFor(40);
+    }
+    odometer.setX(Resources.SENSOR_TO_WHEEL_DISTANCE);
+    leftMotor.stop();
+    rightMotor.stop();
+    
+    Navigation.travelTo(0, 0);
+    Navigation.turnTo(0);
     System.exit(0);
-  }
-  /*
-   * returns RMS of an int array
-   * 
-   */
-
-  public static int average(int[] arr) {
-    double sum = 0;
-    for (int i = 0; i < arr.length; i++)
-      sum = sum + arr[i] * arr[i];
-
-    return (int) Math.sqrt((sum / arr.length));
   }
 
   /**
@@ -119,30 +99,40 @@ public class LightLocalizer {
     }
   }
 
-  /**
-   * initalizes the buffer array
-   * 
-   * @param buffer array to initalize
-   */
-  public static void initalize(int[] buffer) {
+ /**
+  * performs angle correction to 0,0.
+  */
+ public static void localizeAngle()
+ {
+   leftMotor.setSpeed(100);
+   rightMotor.setSpeed(100);
+   //Resources.SENSOR_TO_WHEEL_ANGLE;
+   leftMotor.rotate(Navigation.convertAngle(360), true);
+   rightMotor.rotate(-Navigation.convertAngle(360), false);
+   int count = 0;
+   boolean steadyState = true;
+   while(leftMotor.isMoving())
+   {
 
-    float[] lightData = new float[3];
-    colorSensor.getRGBMode().fetchSample(lightData, 0);
-    /**
-     * Resizing the actual intensity values to make it more readable and thus easier to test. Also easier to deal with
-     * ints than double precision
-     */
-
-    for (int i = 0; i < 3; i++) {
-      lightData[i] *= 2000;
-    }
-    int init = (int) (lightData[0] + lightData[1] + lightData[2]);
-    
-    for (int i = 0; i < buffer.length; i++) {
-      buffer[i] = init;
-    }
-  }
-
+     int diff = lightPoller.getIntensity();
+     if (diff > 0) // negative value, so has returned to steady state (fluctuations around 0,0)
+       steadyState = true;
+     /*
+      * spike of less than -75 implies a line has been detected. steadyState makes it
+      * so that it only looks for lines again after it goes back to 0, i.e doesn't detect same lines multiple times.
+      */
+     if (diff < -50 && steadyState == true) {
+       
+       Sound.beepSequence();
+       steadyState = false;
+       count++; //increment lines detected
+       LCD.drawString("lines: " + count, 0, 6);
+       System.out.println("Line detected at: " + odometer.getXYT()[2]);
+     }
+     sleepFor(50);
+     //int error = theta - detectionAngle;
+   }
+ }
 }
 
 

@@ -29,7 +29,9 @@ public class Lab4 {
     
   
     new Thread(odometer).start();
-    LightLocalizer.Localize();
+    new Thread(new lightPoller()).start();
+    LightLocalizer.localizeAngle();
+    System.exit(0);
     buttonChoice = chooseType();// chooseType();
     LCD.clear();
     
@@ -38,7 +40,11 @@ public class Lab4 {
      new Thread(new UltrasonicPoller()).start();
       //Testing.lightSensorTest(); 
       UltrasonicLocalizer.RisingEdge();
-     
+      Button.waitForAnyPress();
+      new Thread(new lightPoller()).start();
+      LightLocalizer.localizeDistance();
+      LightLocalizer.localizeAngle();
+      
       
     } else {
       UltrasonicLocalizer.FallingEdge();

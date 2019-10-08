@@ -62,12 +62,12 @@ public class Resources {
   /**
    * Offset between sensor and wheels. (magnitude)
    */
-  public static final double SENSOR_TO_WHEEL_DISTANCE = 5.59;
+  public static final double SENSOR_TO_WHEEL_DISTANCE = 4;
   
   /**
    * angle between light sensor position and wheelbase centre in radians
    */
-  public static final double SENSOR_TO_WHEEL_ANGLE = 1.391;
+  public static final double SENSOR_TO_WHEEL_ANGLE = 50;
   /**
    * The tile size in centimeters.
    */
