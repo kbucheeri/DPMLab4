@@ -7,7 +7,7 @@ import static ca.mcgill.ecse211.lab4.Resources.odometer;
 import static ca.mcgill.ecse211.lab4.Resources.colorSensor;
 
 public class LightLocalizer {
-  public static int[] buffer = {1000, 1000, 1000, 1000};
+  public static int[] buffer = new int[5];
 
   /**
    * calculates the intensity from the light sensor and applies rudimentary filtering In the form of the arithmetic
@@ -44,7 +44,7 @@ public class LightLocalizer {
 
     double intensity4 = 0;
     int count = 0;
-
+    initalize(buffer);
     leftMotor.setSpeed(100);
     rightMotor.setSpeed(100);
     leftMotor.rotate(Navigation.convertAngle(360), true);
@@ -52,87 +52,94 @@ public class LightLocalizer {
     int prevIntensity = 1500;
     int intensity = 2000;
     // difference
-    int diff = 100;
+    int diff = 1000;
     int prevDiff = 100;
+    int lines = 0;
+    // if light sensing returns to 0 to prevent multiple line readings.
+    boolean steadyState = true;
     /*
      * in the sweep. stops when either of the motors stop.
      */
     while (leftMotor.isMoving()) {
 
       intensity = calculateIntensity();
-<<<<<<< Updated upstream
+      if (diff < 0) // positive value, so has returned to steady state
+        steadyState = true;
+      /*
+       * only check for lines every 5 iterations so that polling and action frequency aren't the same. also skip over
+       * first ten counts because of errors when polling starts.
+       * 
+       */
+      if (diff > 75 && steadyState == true) {
+        Sound.beepSequence();
+        // System.out.println("\n\nThink I detected a line at: " + odometer.getXYT()[2] + "\n\n");
+        count = 0; // reset counter so it doesn't check for lines for 5 samples
+        steadyState = false;
+        lines++;
+      }
+
+
+      // create a variable that resets when it goes positive
       diff = intensity - prevIntensity;
-      /*
-       * only check for lines every 5 iterations so that polling and action frequency aren't the same.
-       * also skip over first ten counts because of errors when polling starts.
-       * Will never be exactly 0
-       */
-      if (//count % 5 == 0 &&
-          //very safe procedure
-           count > 10) {
-        if (diff > 0 && prevDiff < -50 //crossing
-            && prevIntensity < 1000) //just ensure the magnitude of the drop was low enough
-              Sound.beepSequence();
-       // System.out.println("\n\nThink I detected a line at: " + odometer.getXYT()[2] + "\n\n");
-      }
-      
-      
-=======
-      
-      /*
-       * only check for lines every 5 iterations so that polling and action frequency aren't the same.
-       * also skip over first ten counts because of errors when polling starts.
-       * Will never be exactly 0
-       */
-      if (//count % 2 == 0 &&
-          //very safe procedure
-           count > 10 && diff > 150) {
-        //if (diff > 100 && prevDiff < -50) //crossing
-       
-         // && prevIntensity < 1000) //just ensure the magnitude of the drop was low enough
-              Sound.beepSequence();
-        System.out.println("\n\nThink I detected a line at: " + odometer.getXYT()[2] + "\n\n");
-        sleepFor(200); //prevent detecting multiple times
-      }
-      
-      
-      
->>>>>>> Stashed changes
-      
-      System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " + diff);
+      System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " + diff + ", " + lines * 50);
 
       sleepFor(40);
-      count++;
-<<<<<<< Updated upstream
-=======
-      diff = intensity - prevIntensity;
+
+
       prevIntensity = intensity;
-      
       prevDiff = diff;
->>>>>>> Stashed changes
     }
     // store previous value of intensity in prevIntensity
-    
+
     System.exit(0);
   }
-/*
- * Weighted average
- * 
- */
-  
-  public static int average(int[] arr) {
-    int sum = 0;
-    for (int i = 0; i < arr.length; i++)
-      sum  = sum + arr[i];
+  /*
+   * returns RMS of an int array
+   * 
+   */
 
-    return sum / arr.length;
+  public static int average(int[] arr) {
+    double sum = 0;
+    for (int i = 0; i < arr.length; i++)
+      sum = sum + arr[i] * arr[i];
+
+    return (int) Math.sqrt((sum / arr.length));
   }
 
+  /**
+   * sleeps thread for a set amount of time
+   * 
+   * @param duration amount to sleep for
+   */
   public static void sleepFor(int duration) {
     try {
       Thread.sleep(duration);
     } catch (InterruptedException e) {
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * initalizes the buffer array
+   * 
+   * @param buffer array to initalize
+   */
+  public static void initalize(int[] buffer) {
+
+    float[] lightData = new float[3];
+    colorSensor.getRGBMode().fetchSample(lightData, 0);
+    /**
+     * Resizing the actual intensity values to make it more readable and thus easier to test. Also easier to deal with
+     * ints than double precision
+     */
+
+    for (int i = 0; i < 3; i++) {
+      lightData[i] *= 2000;
+    }
+    int init = (int) (lightData[0] + lightData[1] + lightData[2]);
+    
+    for (int i = 0; i < buffer.length; i++) {
+      buffer[i] = init;
     }
   }
 
