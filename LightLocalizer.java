@@ -104,11 +104,11 @@ public class LightLocalizer {
   */
  public static void localizeAngle()
  {
-   leftMotor.setSpeed(100);
-   rightMotor.setSpeed(100);
+   leftMotor.setSpeed(150);
+   rightMotor.setSpeed(150);
    //Resources.SENSOR_TO_WHEEL_ANGLE;
-   leftMotor.rotate(Navigation.convertAngle(360), true);
-   rightMotor.rotate(-Navigation.convertAngle(360), false);
+   leftMotor.rotate(Navigation.convertAngle(900), true);
+   rightMotor.rotate(-Navigation.convertAngle(900), true);
    int count = 0;
    boolean steadyState = true;
    while(leftMotor.isMoving())
@@ -121,15 +121,17 @@ public class LightLocalizer {
       * spike of less than -75 implies a line has been detected. steadyState makes it
       * so that it only looks for lines again after it goes back to 0, i.e doesn't detect same lines multiple times.
       */
-     if (diff < -50 && steadyState == true) {
+     if (diff < -75 && steadyState == true) {
        
        Sound.beepSequence();
        steadyState = false;
-       count++; //increment lines detected
+       
        LCD.drawString("lines: " + count, 0, 6);
-       System.out.println("Line detected at: " + odometer.getXYT()[2]);
+       System.out.println(odometer.getXYT()[2] - (count%4) * 90);
+       //System.out.println("Line detected at: " + odometer.getXYT()[2]);
+       count++; //increment lines detected
      }
-     sleepFor(50);
+     sleepFor(40);
      //int error = theta - detectionAngle;
    }
  }

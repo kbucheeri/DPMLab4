@@ -31,7 +31,7 @@ public class Resources {
   /**
    * The robot width in centimeters.
    */
-  public static final double TRACK = 14.85; 
+  public static final double TRACK = 14.8; 
   /**
    * Wall follower speed
    */
