@@ -65,9 +65,9 @@ public class Resources {
   public static final double SENSOR_TO_WHEEL_DISTANCE = 4;
   
   /**
-   * angle between light sensor position and wheelbase centre in radians
+   * angle between light sensor position and wheelbase centre in degrees
    */
-  public static final double SENSOR_TO_WHEEL_ANGLE = 50;
+  public static final double SENSOR_TO_WHEEL_ANGLE = 70;
   /**
    * The tile size in centimeters.
    */

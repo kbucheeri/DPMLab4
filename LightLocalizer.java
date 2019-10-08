@@ -110,6 +110,10 @@ public class LightLocalizer {
    leftMotor.rotate(Navigation.convertAngle(900), true);
    rightMotor.rotate(-Navigation.convertAngle(900), true);
    int count = 0;
+   /*
+    * sum of the errors
+    */
+   int sum = 0;
    boolean steadyState = true;
    while(leftMotor.isMoving())
    {
@@ -127,13 +131,17 @@ public class LightLocalizer {
        steadyState = false;
        
        LCD.drawString("lines: " + count, 0, 6);
-       System.out.println(odometer.getXYT()[2] - (count%4) * 90);
+       sum += odometer.getXYT()[2] - (count%4) * 90 - Resources.SENSOR_TO_WHEEL_ANGLE;
        //System.out.println("Line detected at: " + odometer.getXYT()[2]);
        count++; //increment lines detected
      }
      sleepFor(40);
      //int error = theta - detectionAngle;
    }
+   //get average error
+   sum /= count;
+   odometer.incrementTheta(sum);
+   Navigation.turnTo(0);
  }
 }
 

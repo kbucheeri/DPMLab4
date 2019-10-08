@@ -29,9 +29,7 @@ public class Lab4 {
     
   
     new Thread(odometer).start();
-    new Thread(new lightPoller()).start();
-    LightLocalizer.localizeAngle();
-    System.exit(0);
+   
     buttonChoice = chooseType();// chooseType();
     LCD.clear();
     
@@ -44,6 +42,7 @@ public class Lab4 {
       new Thread(new lightPoller()).start();
       LightLocalizer.localizeDistance();
       LightLocalizer.localizeAngle();
+      System.exit(0);
       
       
     } else {
