@@ -60,6 +60,7 @@ public class LightLocalizer {
     while (leftMotor.isMoving()) {
 
       intensity = calculateIntensity();
+<<<<<<< Updated upstream
       diff = intensity - prevIntensity;
       /*
        * only check for lines every 5 iterations so that polling and action frequency aren't the same.
@@ -76,15 +77,42 @@ public class LightLocalizer {
       }
       
       
+=======
+      
+      /*
+       * only check for lines every 5 iterations so that polling and action frequency aren't the same.
+       * also skip over first ten counts because of errors when polling starts.
+       * Will never be exactly 0
+       */
+      if (//count % 2 == 0 &&
+          //very safe procedure
+           count > 10 && diff > 150) {
+        //if (diff > 100 && prevDiff < -50) //crossing
+       
+         // && prevIntensity < 1000) //just ensure the magnitude of the drop was low enough
+              Sound.beepSequence();
+        System.out.println("\n\nThink I detected a line at: " + odometer.getXYT()[2] + "\n\n");
+        sleepFor(200); //prevent detecting multiple times
+      }
+      
+      
+      
+>>>>>>> Stashed changes
       
       System.out.println(odometer.getXYT()[2] + ", " + intensity + ", " + diff);
 
       sleepFor(40);
       count++;
+<<<<<<< Updated upstream
+=======
+      diff = intensity - prevIntensity;
+      prevIntensity = intensity;
+      
+      prevDiff = diff;
+>>>>>>> Stashed changes
     }
     // store previous value of intensity in prevIntensity
-    prevIntensity = intensity;
-    prevDiff = diff;
+    
     System.exit(0);
   }
 /*

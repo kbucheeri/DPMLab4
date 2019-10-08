@@ -29,8 +29,13 @@ public class Lab4 {
     
   
     new Thread(odometer).start();
+<<<<<<< Updated upstream
     //LightLocalizer.Localize();
     buttonChoice = Button.ID_LEFT;// chooseType();
+=======
+    LightLocalizer.Localize();
+    buttonChoice = chooseType();// chooseType();
+>>>>>>> Stashed changes
     LCD.clear();
     
     if (buttonChoice == Button.ID_LEFT) {
@@ -41,7 +46,7 @@ public class Lab4 {
      
       
     } else {
-      UltrasonicLocalizer.RisingEdge();
+      UltrasonicLocalizer.FallingEdge();
     }
     //  new Thread(new OdometryCorrectionTest()).start();
     
